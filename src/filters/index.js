@@ -1,21 +1,16 @@
-export function trimAuthorInfo (authorInfo) {
-  if (authorInfo && authorInfo.length > 2) {
-    return authorInfo
-  }
-
-  return 'No info'
-}
-
-export function trimSummary (summary) {
-  if (!summary) {
+export function trimText (text, maxLen) {
+  if (!text) {
     return '...'
   }
-  if (summary.length < 1) {
+  if (text.length < 1) {
     return '...'
   }
-  if (summary.length > 48) {
-    return summary.substr(0, 64) + '...'
+  if (maxLen < 2) {
+    maxLen = 2
+  }
+  if (text.length > maxLen) {
+    return text.substr(0, maxLen) + '...'
   }
 
-  return summary
+  return text
 }

@@ -3,7 +3,7 @@
     <el-row type="flex" class="row-bg" justify="center">
       <el-col :span="6">
         <h1>{{ keyWord }}</h1>
-        <el-input icon="search" v-model="keyWord" @click="search" @keyup.enter="search">
+        <el-input :icon="getInputIcon()" v-model="keyWord" @click="search" @keyup.enter.native="search">
         </el-input>
       </el-col>
     </el-row>
@@ -16,24 +16,38 @@
         <h4>{{ book.title }}</h4>
         <el-tooltip class="item" effect="light" :content="trimInfo(book.author_intro)" placement="bottom-end">
           <el-button size="mini" v-for="author in book.author" :plain="true" type="success">
-            {{ author }}
+            {{ author | trimText(16) }}
           </el-button>
         </el-tooltip>
       </el-col>
       <el-col :span="4" :offset="0">
-        <el-button size="mini" v-for="tag in book.tags" :plain="true" type="info">
-          {{ tag.name }}
-        </el-button>
+        <el-tooltip v-for="tag in book.tags" class="item" effect="light" :content="tag.name" placement="bottom-end">
+          <el-button size="mini" :plain="true" type="info">
+            {{ tag.name | trimText(10) }}
+          </el-button>
+        </el-tooltip>
         <h4 v-show="book.tags.length==0">没有信息</h4>
       </el-col>
       <el-col :span="4" :offset="0">
-        <small>{{ book.summary | trimSummary }}</small>
+        <small>{{ book.summary | trimText(64) }}</small>
       </el-col>
       <el-col :span="4" :offset="0">
         <div><small>出版日期:{{ book.pubdate }}</small></div>
         <div><small>出版社:{{ book.publisher }}</small></div>
         <div><small>定价:{{ book.price }}</small></div>
         <!-- <div><small>系列:{{ book.series.title }}</small></div> -->
+      </el-col>
+      <el-col :span="4">
+          <!-- {{ book.rating.average }} -->
+        <h5>{{book.rating.numRaters}}个人评价了这本书</h5>
+        <el-rate
+          v-model="book.rating.average"
+          :max="10"
+          disabled
+          show-text
+          text-color="#ff9900"
+        >
+        </el-rate>
       </el-col>
     </el-row>
 
@@ -49,17 +63,28 @@ export default {
   data () {
     return {
       keyWord: '',
-      books: []
+      books: [],
+      searching: false
     }
   },
 
   methods: {
+    getInputIcon: function () {
+      if (this.searching === false) {
+        return 'search'
+      }
+      return 'loading'
+    },
+
     search: function () {
+      this.searching = true
       this.$http.jsonp('https://api.douban.com/v2/book/search?q=' + this.keyWord)
       .then((response) => {
         this.books = response.body.books
         console.log(response)
+        this.searching = false
       }, (response) => {
+        this.searching = false
       })
     },
 
