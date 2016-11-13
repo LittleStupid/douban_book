@@ -2,7 +2,7 @@
   <div>
     <el-row type="flex" class="row-bg" justify="center">
       <el-col :span="6">
-        <h1>{{ keyWord }}</h1>
+        <h3>{{ keyWord }}</h3>
         <el-input :icon="getInputIcon()" v-model="keyWord" @click="search" @keyup.enter.native="search">
         </el-input>
       </el-col>
@@ -32,6 +32,8 @@
         <small>{{ book.summary | trimText(64) }}</small>
       </el-col>
       <el-col :span="4" :offset="0">
+        <div><small>系列:{{getBookSeriesTitle(book)}}</small></div>
+        <div><small>isbn:{{ book.isbn13 }}</small></div>
         <div><small>出版日期:{{ book.pubdate }}</small></div>
         <div><small>出版社:{{ book.publisher }}</small></div>
         <div><small>定价:{{ book.price }}</small></div>
@@ -74,6 +76,22 @@ export default {
         return 'search'
       }
       return 'loading'
+    },
+
+    getBookSeriesTitle: function (book) {
+      if (!book) {
+        return '无'
+      }
+
+      if (!book.series) {
+        return '无'
+      }
+
+      if (!book.series.title) {
+        return '无'
+      }
+
+      return book.series.title
     },
 
     search: function () {
