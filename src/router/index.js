@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import ItemList from '../components/ItemList.vue'
-import Hello from '../components/Hello.vue'
+import Detail from '../components/Detail.vue'
 
 Vue.use(Router)
 
@@ -10,7 +10,6 @@ export default new Router({
   scrollBehavior: () => ({ y: 0 }),
   routes: [
     { path: '/books', component: ItemList },
-    { path: '/hello', component: Hello }
-    // { path: '*', redirect: '/' }
+    { path: '/books/:id', component: Detail }
   ]
 })

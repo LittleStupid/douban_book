@@ -10,7 +10,9 @@
 
     <el-row justify="start" align="start" v-for="book in books">
       <el-col :span="2" >
-        <img :src='book.images.small'>
+        <router-link :to="'/books/' + book.id">
+          <img :src='book.images.small'>
+        </router-link>
       </el-col>
       <el-col :span="4" :offset="0">
         <h4>{{ book.title }}</h4>
@@ -39,7 +41,7 @@
         <div><small>定价:{{ book.price }}</small></div>
         <!-- <div><small>系列:{{ book.series.title }}</small></div> -->
       </el-col>
-      <el-col :span="4">
+      <el-col :span="6">
           <!-- {{ book.rating.average }} -->
         <h5>{{book.rating.numRaters}}个人评价了这本书</h5>
         <el-rate

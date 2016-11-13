@@ -1,19 +1,13 @@
 <template>
   <div id="app">
-    <!-- <ItemList></ItemList> -->
     <router-view class="view"></router-view>
   </div>
 </template>
 
 <script>
-import Hello from './components/Hello'
-import ItemList from './components/ItemList'
-
 export default {
   name: 'app',
   components: {
-    Hello,
-    ItemList
   }
 }
 </script>
