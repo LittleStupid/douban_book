@@ -12,6 +12,7 @@ export default new Router({
   routes: [
     { path: '/books', component: ItemList },
     { path: '/books/:id', component: Detail },
-    { path: '/users/:id', component: User }
+    { path: '/users/:id', component: User },
+    { path: '/', redirect: '/books' }
   ]
 })
