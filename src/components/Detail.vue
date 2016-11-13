@@ -1,5 +1,5 @@
 <template>
-  <div class="detal">
+  <div class="detail">
     <el-row class="row-bg">
       <el-col :span="8">
         <img :src="book.images.large" alt="pic">
@@ -7,7 +7,7 @@
         <h4>{{ book.subtitle }}</h4>
         <h5>{{ book.author }}</h5>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="16">
         <div>页数: {{ book.pages }}</div>
         <div>出版社: {{ book.publisher }}</div>
         <div>作者信息: {{ book.author_intro }}</div>
@@ -29,9 +29,9 @@
           <!-- <div>{{ annotation }}</div> -->
           <div>{{ annotation.author_user.name }}</div>
           <div>
-            <a :href="annotation.author_user.alt">
+            <router-link :to="'/users/' + annotation.author_user.id">
               <img :src="annotation.author_user.avatar" alt="avatar">
-            </a>
+            </router-link>
           </div>
           <div>{{ annotation.time }}</div>
         </div>
