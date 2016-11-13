@@ -17,14 +17,14 @@
       <el-col :span="4" :offset="0">
         <h4>{{ book.title }}</h4>
         <el-tooltip class="item" effect="light" :content="trimInfo(book.author_intro)" placement="bottom-end">
-          <el-button size="mini" v-for="author in book.author" :plain="true" type="success">
+          <el-button size="mini" v-for="author in book.author" :plain="true" type="success" @click='searchByWords(author)'>
             {{ author | trimText(16) }}
           </el-button>
         </el-tooltip>
       </el-col>
       <el-col :span="4" :offset="0">
         <el-tooltip v-for="tag in book.tags" class="item" effect="light" :content="tag.name" placement="bottom-end">
-          <el-button size="mini" :plain="true" type="info">
+          <el-button size="mini" :plain="true" type="info" @click="searchByWords(tag.name)">
             {{ tag.name | trimText(10) }}
           </el-button>
         </el-tooltip>
@@ -106,6 +106,11 @@ export default {
       }, (response) => {
         this.searching = false
       })
+    },
+
+    searchByWords: function (words) {
+      this.keyWord = words
+      this.search()
     },
 
     hoverImg: function () {
