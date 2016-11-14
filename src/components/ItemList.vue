@@ -18,66 +18,19 @@
       </el-pagination>
     </el-row>
     <el-row justify="start" align="start" v-for="book in books" v-if="books">
-      <el-col :span="2" >
-        <router-link :to="'/books/' + book.id">
-          <img :src='book.images.small'>
-        </router-link>
-      </el-col>
-      <el-col :span="4" :offset="0">
-        <h4>{{ book.title }}</h4>
-        <el-tooltip class="item" effect="light" :content="trimInfo(book.author_intro)" placement="bottom-end">
-          <el-button size="mini" v-for="author in book.author" :plain="true" type="success" @click='searchByWords(author)'>
-            {{ author | trimText(16) }}
-          </el-button>
-        </el-tooltip>
-      </el-col>
-      <el-col :span="4" :offset="0">
-        <el-tooltip v-for="tag in book.tags" class="item" effect="light" :content="tag.name" placement="bottom-end">
-          <el-button size="mini" :plain="true" type="info" @click="searchByWords(tag.name)">
-            {{ tag.name | trimText(10) }}
-          </el-button>
-        </el-tooltip>
-        <h4 v-show="book.tags.length==0">没有信息</h4>
-      </el-col>
-      <el-col :span="4" :offset="0">
-        <small>{{ book.summary | trimText(64) }}</small>
-      </el-col>
-      <el-col :span="4" :offset="0">
-        <div><small>系列:{{getBookSeriesTitle(book)}}</small></div>
-        <div><small>isbn:{{ book.isbn13 }}</small></div>
-        <div><small>出版日期:{{ book.pubdate }}</small></div>
-        <div><small>出版社:{{ book.publisher }}</small></div>
-        <div><small>定价:{{ book.price }}</small></div>
-        <!-- <div><small>系列:{{ book.series.title }}</small></div> -->
-      </el-col>
-      <el-col :span="6">
-        <h5>{{book.rating.numRaters}}个人评价了这本书</h5>
-        <h5>评分:{{book.rating.average}}</h5>
-        <el-button v-if="book.series" size="mini" :plain="true" type="success" @click='searchByWords(book.series.title)'>
-          {{ book.series.title | trimText(16) }}
-          ({{ book.series.id }})
-        </el-button>
-
-
-        <!-- <el-rate
-          v-model="book.rating.average"
-          :max="10"
-          disabled
-          show-text
-          text-color="#ff9900"
-        >
-        </el-rate> -->
-      </el-col>
+      <Item :book="book" :key="book.id"></Item>
     </el-row>
-
   </div>
 </template>
 
 <script>
-// import Item from './Item'
+import Item from './Item.vue'
 
 export default {
   name: 'ItemList',
+  components: {
+    Item
+  },
 
   data () {
     return {
