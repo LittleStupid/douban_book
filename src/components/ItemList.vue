@@ -3,12 +3,21 @@
     <el-row type="flex" class="row-bg" justify="center">
       <el-col :span="6">
         <h3>{{ keyWord }}</h3>
-        <el-input :icon="getInputIcon()" v-model="keyWord" @click="search" @keyup.enter.native="search">
+        <el-input :icon="getInputIcon()" v-model="keyWord" @click="search(0)" @keyup.enter.native="search(0)">
         </el-input>
       </el-col>
     </el-row>
 
-    <el-row justify="start" align="start" v-for="book in books">
+    <el-row type="flex">
+      <el-pagination
+        @current-change="handleCurrentChange"
+        :current-page="myPage"
+        layout="prev, pager, next"
+        :page-size="20"
+        :total="totalNum">
+      </el-pagination>
+    </el-row>
+    <el-row justify="start" align="start" v-for="book in books" v-if="books">
       <el-col :span="2" >
         <router-link :to="'/books/' + book.id">
           <img :src='book.images.small'>
@@ -42,16 +51,22 @@
         <!-- <div><small>系列:{{ book.series.title }}</small></div> -->
       </el-col>
       <el-col :span="6">
-          <!-- {{ book.rating.average }} -->
         <h5>{{book.rating.numRaters}}个人评价了这本书</h5>
-        <el-rate
+        <h5>评分:{{book.rating.average}}</h5>
+        <el-button v-if="book.series" size="mini" :plain="true" type="success" @click='searchByWords(book.series.title)'>
+          {{ book.series.title | trimText(16) }}
+          ({{ book.series.id }})
+        </el-button>
+
+
+        <!-- <el-rate
           v-model="book.rating.average"
           :max="10"
           disabled
           show-text
           text-color="#ff9900"
         >
-        </el-rate>
+        </el-rate> -->
       </el-col>
     </el-row>
 
@@ -67,8 +82,19 @@ export default {
   data () {
     return {
       keyWord: '',
-      books: [],
-      searching: false
+      books: null,
+      searching: false,
+      total: 0,
+      myPage: 0
+    }
+  },
+
+  computed: {
+    totalNum: function () {
+      if (this.total > 240) {
+        return 240
+      }
+      return this.total
     }
   },
 
@@ -96,12 +122,15 @@ export default {
       return book.series.title
     },
 
-    search: function () {
+    search: function (page) {
+      let startQuery = 'start=' + (page * 20)
       this.searching = true
-      this.$http.jsonp('https://api.douban.com/v2/book/search?q=' + this.keyWord)
+      this.$http.jsonp('https://api.douban.com/v2/book/search?q=' +
+                        this.keyWord + '&' + startQuery)
       .then((response) => {
         this.books = response.body.books
-        console.log(response)
+        this.total = response.body.total
+        this.myPage = page
         this.searching = false
       }, (response) => {
         this.searching = false
@@ -110,11 +139,15 @@ export default {
 
     searchByWords: function (words) {
       this.keyWord = words
-      this.search()
+      this.search(0)
     },
 
     hoverImg: function () {
       console.log('hovering')
+    },
+
+    handleCurrentChange: function (val) {
+      this.search(val)
     },
 
     trimInfo: function (info) {

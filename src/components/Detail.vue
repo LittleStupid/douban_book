@@ -1,5 +1,5 @@
 <template>
-  <div class="detail">
+  <div class="detail" v-if="book">
     <el-row class="row-bg">
       <el-col :span="8">
         <img :src="book.images.large" alt="pic">
