@@ -93,7 +93,8 @@ export default {
     },
 
     search: function (page) {
-      let startQuery = 'start=' + (page * 20)
+      let truePage = page - 1
+      let startQuery = 'start=' + (truePage * 20)
       let queryStr = 'https://api.douban.com/v2/book/search?q=' +
                       this.keyWord + '&' + startQuery
       console.log(queryStr)
@@ -120,6 +121,10 @@ export default {
 
     handleCurrentChange: function (val) {
       if (this.currentPage === val) {
+        return
+      }
+      if (val < 0) {
+        console.log('Search page is less than zero')
         return
       }
       this.search(val)
