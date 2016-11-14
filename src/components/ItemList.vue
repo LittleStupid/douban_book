@@ -1,18 +1,32 @@
 <template>
   <div>
-    <el-row type="flex" class="row-bg" justify="center">
-      <el-col :span="6">
-        <h3>{{ keyWord }}</h3>
-        <el-input :icon="getInputIcon()" v-model="keyWord" @click="search(0)"
-                  @keyup.enter.native="search(0)">
-        </el-input>
-      </el-col>
-    </el-row>
+    <div>
+      <el-row type="flex" justify="center">
+        <h3 v-if="showSearchText">{{ keyWord }}</h3>
+        <h3 v-else>Search Your Book</h3>
+      </el-row>
+      <el-row type="flex"  justify="center">
+        <el-col :span="6">
+          <el-input :icon="getInputIcon()" v-model="keyWord" @click="search(0)"
+                    @keyup.enter.native="search(0)">
+          </el-input>
+        </el-col>
+      </el-row>
+      <el-row type="flex"  justify="center">
+        <el-col :span="2">
+          <el-switch
+            v-model="showSearchText"
+            on-text="on"
+            off-text="off">
+          </el-switch>
+        </el-col>
+      </el-row>
+    </div>
 
     <el-row type="flex">
       <el-pagination
         @current-change="handleCurrentChange"
-        :current-page="myPage"
+        :current-page="currentPage"
         layout="prev, pager, next"
         :page-size="20"
         :total="totalNum">
@@ -40,7 +54,8 @@ export default {
       books: null,
       searching: false,
       total: 0,
-      myPage: 0
+      currentPage: 1,
+      showSearchText: true
     }
   },
 
@@ -79,13 +94,15 @@ export default {
 
     search: function (page) {
       let startQuery = 'start=' + (page * 20)
+      let queryStr = 'https://api.douban.com/v2/book/search?q=' +
+                      this.keyWord + '&' + startQuery
+      console.log(queryStr)
       this.searching = true
-      this.$http.jsonp('https://api.douban.com/v2/book/search?q=' +
-                        this.keyWord + '&' + startQuery)
+      this.$http.jsonp(queryStr)
       .then((response) => {
         this.books = response.body.books
         this.total = response.body.total
-        this.myPage = page
+        this.currentPage = page
         this.searching = false
       }, (response) => {
         this.searching = false
@@ -102,6 +119,9 @@ export default {
     },
 
     handleCurrentChange: function (val) {
+      if (this.currentPage === val) {
+        return
+      }
       this.search(val)
     },
 
