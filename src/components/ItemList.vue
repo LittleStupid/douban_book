@@ -3,7 +3,8 @@
     <el-row type="flex" class="row-bg" justify="center">
       <el-col :span="6">
         <h3>{{ keyWord }}</h3>
-        <el-input :icon="getInputIcon()" v-model="keyWord" @click="search(0)" @keyup.enter.native="search(0)">
+        <el-input :icon="getInputIcon()" v-model="keyWord" @click="search(0)"
+                  @keyup.enter.native="search(0)">
         </el-input>
       </el-col>
     </el-row>
@@ -18,7 +19,8 @@
       </el-pagination>
     </el-row>
     <el-row justify="start" align="start" v-for="book in books" v-if="books">
-      <Item :book="book" :key="book.id"></Item>
+      <Item :book="book" :key="book.id" v-on:tagClicked="searchByWords($event)">
+      </Item>
     </el-row>
   </div>
 </template>

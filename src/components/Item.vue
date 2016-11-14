@@ -8,14 +8,14 @@
     </el-col>
     <el-col :span="4">
       <el-tooltip class="item" effect="light" :content="book.author_intro" placement="bottom-end">
-        <el-button size="mini" v-for="author in book.author" :plain="true" type="success" @click='searchByWords(author)'>
+        <el-button size="mini" v-for="author in book.author" :plain="true" type="success" @click='tagClicked(author)'>
           {{ author | trimText(16) }}
         </el-button>
       </el-tooltip>
     </el-col>
     <el-col :span="4" :offset="0">
       <el-tooltip v-for="tag in book.tags" class="item" effect="light" :content="tag.name" placement="bottom-end">
-        <el-button size="mini" :plain="true" type="info" @click="searchByWords(tag.name)">
+        <el-button size="mini" :plain="true" type="info" @click="tagClicked(tag.name)">
           {{ tag.name | trimText(10) }}
         </el-button>
       </el-tooltip>
@@ -25,19 +25,20 @@
       <small>{{ book.summary | trimText(64) }}</small>
     </el-col>
     <el-col :span="4">
-      <div><small>系列:{{getBookSeriesTitle(book)}}</small></div>
-      <div><small>isbn:{{ book.isbn13 }}</small></div>
+      <el-button v-if="book.series" size="mini" :plain="true" type="success" @click='tagClicked(book.series.title)'>
+        {{ book.series.title | trimText(16) }}
+        ({{ book.series.id }})
+      </el-button>
       <div><small>出版日期:{{ book.pubdate }}</small></div>
       <div><small>出版社:{{ book.publisher }}</small></div>
       <div><small>定价:{{ book.price }}</small></div>
     </el-col>
     <el-col :span="6">
-      <h5>{{book.rating.numRaters}}个人评价了这本书</h5>
-      <h5>评分:{{book.rating.average}}</h5>
-      <el-button v-if="book.series" size="mini" :plain="true" type="success" @click='searchByWords(book.series.title)'>
-        {{ book.series.title | trimText(16) }}
-        ({{ book.series.id }})
-      </el-button>
+      <!-- <h5>{{book.rating.numRaters}}个人评价了这本书</h5> -->
+
+      <el-rate v-model="(book.rating.average)" :max="10" disabled
+               show-text text-color="#ff9900">
+      </el-rate>
     </el-col>
   </div>
 </template>
@@ -62,6 +63,10 @@ export default {
       }
 
       return book.series.title
+    },
+
+    tagClicked: function (value) {
+      this.$emit('tagClicked', value)
     }
   }
 }
