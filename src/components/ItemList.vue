@@ -7,8 +7,8 @@
       </el-row>
       <el-row type="flex"  justify="center">
         <el-col :span="6">
-          <el-input :icon="getInputIcon()" v-model="keyWord" @click="search(0)"
-                    @keyup.enter.native="search(0)">
+          <el-input :icon="getInputIcon()" v-model="keyWord" @click="searchToQuery()"
+                    @keyup.enter.native="searchToQuery()">
           </el-input>
         </el-col>
       </el-row>
@@ -58,6 +58,9 @@ export default {
       showSearchText: true
     }
   },
+  watch: {
+    '$route': 'onQueryChange'
+  },
 
   computed: {
     totalNum: function () {
@@ -68,7 +71,25 @@ export default {
     }
   },
 
+  mounted: function () {
+    // console.log('mounted')
+    this.onQueryChange()
+  },
+
   methods: {
+    onQueryChange: function () {
+      console.log(this.$route.query)
+      if (this.$route.query.q == null) {
+        return
+      }
+      this.keyWord = this.$route.query.q
+
+      let page = 1
+      if (this.$route.query.page) {
+        page = this.$route.query.page
+      }
+      this.search(page)
+    },
     getInputIcon: function () {
       if (this.searching === false) {
         return 'search'
@@ -92,12 +113,22 @@ export default {
       return book.series.title
     },
 
+    searchToQuery: function () {
+      if (this.keyWord === null) {
+        return
+      }
+      if (this.keyWord.trim() === '') {
+        return
+      }
+      this.$router.push({ path: 'books',
+        query: { q: this.keyWord, page: this.currentPage } })
+    },
+
     search: function (page) {
       let truePage = page - 1
       let startQuery = 'start=' + (truePage * 20)
       let queryStr = 'https://api.douban.com/v2/book/search?q=' +
                       this.keyWord + '&' + startQuery
-      console.log(queryStr)
       this.searching = true
       this.$http.jsonp(queryStr)
       .then((response) => {
@@ -112,7 +143,8 @@ export default {
 
     searchByWords: function (words) {
       this.keyWord = words
-      this.search(0)
+      this.currentPage = 0
+      this.searchToQuery()
     },
 
     hoverImg: function () {
@@ -124,10 +156,11 @@ export default {
         return
       }
       if (val < 0) {
-        console.log('Search page is less than zero')
         return
       }
-      this.search(val)
+      this.currentPage = val
+      this.searchToQuery()
+      // this.search(val)
     },
 
     trimInfo: function (info) {
