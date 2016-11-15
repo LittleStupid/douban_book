@@ -73,6 +73,9 @@ export default {
   },
 
   mounted: function () {
+    if (this.$route.query.q) {
+      this.inputWord = this.$route.query.q
+    }
     this.onQueryChange()
   },
 
@@ -90,7 +93,7 @@ export default {
 
       let page = 1
       if (this.$route.query.page) {
-        page = this.$route.query.page
+        page = Number(this.$route.query.page)
       }
       this.search(page, keyWord)
     },
@@ -149,6 +152,7 @@ export default {
     },
 
     handleCurrentChange: function (val) {
+      // console.log(typeof (val))
       if (this.currentPage === val) {
         return
       }
