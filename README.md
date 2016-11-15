@@ -1,6 +1,10 @@
 # douban_book
 
-> A Vue.js project
+> A Vue.js project with douban_book_api
+
+[douban_book_api](https://developers.douban.com/wiki/?title=book_v2)
+
+![img](uve_douban.gif)
 
 ## Build Setup
 
