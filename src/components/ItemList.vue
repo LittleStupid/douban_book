@@ -2,13 +2,13 @@
   <div>
     <div>
       <el-row type="flex" justify="center">
-        <h3 v-if="showSearchText">{{ keyWord }}</h3>
+        <h3 v-if="showSearchText">{{ inputWord }}</h3>
         <h3 v-else>Search Your Book</h3>
       </el-row>
       <el-row type="flex"  justify="center">
         <el-col :span="6">
-          <el-input :icon="getInputIcon()" v-model="keyWord" @click="searchToQuery()"
-                    @keyup.enter.native="searchToQuery()">
+          <el-input :icon="getInputIcon()" v-model="inputWord" @click="searchByWords(inputWord)"
+                    @keyup.enter.native="searchByWords(inputWord)">
           </el-input>
         </el-col>
       </el-row>
@@ -50,6 +50,7 @@ export default {
 
   data () {
     return {
+      inputWord: '',
       keyWord: '',
       books: null,
       searching: false,
@@ -72,23 +73,26 @@ export default {
   },
 
   mounted: function () {
-    // console.log('mounted')
     this.onQueryChange()
   },
 
   methods: {
     onQueryChange: function () {
-      console.log(this.$route.query)
-      if (this.$route.query.q == null) {
+      if (!this.$route.query.q) {
         return
       }
-      this.keyWord = this.$route.query.q
+
+      if (this.$route.query.q.trim() === '') {
+        return
+      }
+
+      let keyWord = this.$route.query.q
 
       let page = 1
       if (this.$route.query.page) {
         page = this.$route.query.page
       }
-      this.search(page)
+      this.search(page, keyWord)
     },
     getInputIcon: function () {
       if (this.searching === false) {
@@ -113,38 +117,31 @@ export default {
       return book.series.title
     },
 
-    searchToQuery: function () {
-      if (this.keyWord === null) {
-        return
-      }
-      if (this.keyWord.trim() === '') {
-        return
-      }
+    searchToQuery: function (page, keyWord) {
       this.$router.push({ path: 'books',
-        query: { q: this.keyWord, page: this.currentPage } })
+        query: { q: keyWord, page: page } })
     },
 
-    search: function (page) {
+    search: function (page, keyWord) {
       let truePage = page - 1
       let startQuery = 'start=' + (truePage * 20)
       let queryStr = 'https://api.douban.com/v2/book/search?q=' +
-                      this.keyWord + '&' + startQuery
+                      keyWord + '&' + startQuery
       this.searching = true
       this.$http.jsonp(queryStr)
       .then((response) => {
         this.books = response.body.books
         this.total = response.body.total
         this.currentPage = page
+        this.keyWord = keyWord
         this.searching = false
       }, (response) => {
         this.searching = false
       })
     },
 
-    searchByWords: function (words) {
-      this.keyWord = words
-      this.currentPage = 0
-      this.searchToQuery()
+    searchByWords: function (keyWord) {
+      this.searchToQuery(1, keyWord)
     },
 
     hoverImg: function () {
@@ -158,9 +155,7 @@ export default {
       if (val < 0) {
         return
       }
-      this.currentPage = val
-      this.searchToQuery()
-      // this.search(val)
+      this.searchToQuery(val, this.keyWord)
     },
 
     trimInfo: function (info) {
