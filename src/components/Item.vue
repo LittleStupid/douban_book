@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <el-card class="box-card">
     <el-col :span="2" >
       <router-link :to="'/books/' + book.id">
-        <img :src='book.images.small'>
+        <img :src='book.images.small' v-on:mouseenter="hoverImg">
       </router-link>
       <h4>{{ book.title }}</h4>
     </el-col>
@@ -42,7 +42,7 @@
                show-text text-color="#ff9900">
       </el-rate> -->
     </el-col>
-  </div>
+  </el-card>
 </template>
 
 <script>
@@ -85,6 +85,15 @@ export default {
 
     tagClicked: function (value) {
       this.$emit('tagClicked', value)
+    },
+
+    hoverImg: function () {
+      console.log('hovering')
+      this.$notify({
+        title: this.book.title,
+        message: this.book.author,
+        type: 'success'
+      })
     }
   }
 }
@@ -92,4 +101,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.el-col {
+  padding: inherit;
+}
+.el-button {
+  padding: 2px;
+  margin: 2px;
+}
+.bound {
+  border: 1px solid grey;
+}
 </style>

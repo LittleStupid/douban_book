@@ -1,5 +1,5 @@
 <template>
-  <div class="detail" v-if="book">
+  <div class="detail" v-if="book" transition name="fade">
     <el-row class="row-bg">
       <el-col :span="8">
         <img :src="book.images.large" alt="pic">
@@ -8,18 +8,22 @@
         <h5>{{ book.author }}</h5>
       </el-col>
       <el-col :span="16">
-        <div>页数: {{ book.pages }}</div>
-        <div>出版社: {{ book.publisher }}</div>
-        <div>作者信息: {{ book.author_intro }}</div>
-        <div>售价: {{ book.price }}</div>
-        <div>ISBN10: {{ book.isbn10 }}</div>
-        <div>ISBN13: {{ book.isbn13 }}</div>
+        <div class="info">
+          <div>页数: {{ book.pages }}</div>
+          <div>出版社: {{ book.publisher }}</div>
+          <div>作者信息: {{ book.author_intro }}</div>
+          <div>售价: {{ book.price }}</div>
+          <div>ISBN10: {{ book.isbn10 }}</div>
+          <div>ISBN13: {{ book.isbn13 }}</div>
+        </div>
       </el-col>
     </el-row>
 
     <hr>
     <el-row>
-      <strong>{{ book.summary }}</strong>
+      <el-col :span="22" :offset="1">
+        <strong>{{ book.summary }}</strong>
+      </el-col>
     </el-row>
 
     <el-row v-for="annotation in annotations">
@@ -89,5 +93,16 @@ li {
 
 a {
   color: #42b983;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s
+}
+.fade-enter, .fade-leave-active {
+  opacity: 0
+}
+.info {
+  padding-top: 25%;
+  padding-bottom: 25%;
 }
 </style>

@@ -6,13 +6,11 @@
         <h3 v-else>Search Your Book</h3>
       </el-row>
       <el-row type="flex"  justify="center">
-        <el-col :span="6">
+        <el-col :span="4">
           <el-input :icon="getInputIcon()" v-model="inputWord" @click="searchByWords(inputWord)"
                     @keyup.enter.native="searchByWords(inputWord)">
           </el-input>
         </el-col>
-      </el-row>
-      <el-row type="flex"  justify="center">
         <el-col :span="2">
           <el-switch
             v-model="showSearchText"
@@ -137,18 +135,18 @@ export default {
         this.total = response.body.total
         this.currentPage = page
         this.keyWord = keyWord
+        this.inputWord = keyWord
         this.searching = false
       }, (response) => {
+        this.searching = false
+      }).catch((err) => {
+        console.log(err)
         this.searching = false
       })
     },
 
     searchByWords: function (keyWord) {
       this.searchToQuery(1, keyWord)
-    },
-
-    hoverImg: function () {
-      console.log('hovering')
     },
 
     handleCurrentChange: function (val) {
